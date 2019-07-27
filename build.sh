@@ -45,11 +45,11 @@ function sendLog() {
 function sendRom() {
     cd out
     FILEPATH=$(find -iname "KomodOS-*-${DEVICE}-${KOMODO_BUILD_TYPE}-*.zip)
-    if [[ !-f FILEPATH ]]; then
-        sendInfo "Build Failed, See log";
-        sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")";
+    if [[ ! -f FILEPATH ]]; then
+        sendInfo "Build Failed, See log"
+        sendInfo "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
         sendLog
-        exit 1;
+        exit 1
     fi
     megaput -u $USER_NAME -p $(openssl enc -base64 -d <<< $PASS_MEGA) $FILEPATH
     cd $CDIR
@@ -74,4 +74,5 @@ BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 
 sendRom
-sendInfo "$(echo -e "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.")"
+sendLog
+sendInfo "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
