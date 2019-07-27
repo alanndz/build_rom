@@ -1,0 +1,36 @@
+kind: pipeline
+name: Build Rom KomodOS for Lavender
+
+clone:
+  depth: 1
+
+steps:
+- name: install_tools
+   image: debian:latest
+   commands:
+     - apt-get update
+     - apt-get upgrade
+     - apt-get install -y git ccache automake lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib python-networkx libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libc6-dev linux-libc-dev gcc-multilib g++-5-multilib libssl-dev megatools
+     - git clone https://github.com/akhilnarang/scripts .scripts
+     - bash .scripts/setup/android_build_env.sh
+
+- name: download_rom_stuff
+   image: debian:latest
+   commands:
+     - repo init -u https://github.com/KomodOS-Rom/platform_manifest.git -b pie
+     - repo sync -c -f --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j8
+
+- name: start_build
+   image: debian:latest
+   environment:
+     USER_MEGA:
+        from_secret: USER_MEGA
+     PASS_MEGA:
+       from_secret: PASS_MEGA
+     BOT_API_KEY:
+       from_secret: BOT_API_KEY
+   commands:
+     - bash build.sh
+   when:
+     branch:
+       - komodo-lavender
