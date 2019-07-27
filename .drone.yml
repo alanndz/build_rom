@@ -5,32 +5,38 @@ clone:
   depth: 1
 
 steps:
-- name: install_tools
-   image: debian:latest
-   commands:
-     - apt-get update
-     - apt-get upgrade
-     - apt-get install -y git ccache automake lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib python-networkx libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libc6-dev linux-libc-dev gcc-multilib g++-5-multilib libssl-dev megatools
-     - git clone https://github.com/akhilnarang/scripts .scripts
-     - bash .scripts/setup/android_build_env.sh
+- name: setup_tools
+  image: debian:latest
+  commands:
+    - apt-get update
+    - apt-get install -y git ccache lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib python-networkx libxml2-utils bzip2 libbz2-dev libghc-bzlib-dev squashfs-tools pngcrush liblz4-tool optipng libc6-dev-i386 gcc-multilib libssl-dev gnupg flex lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev xsltproc unzip python-pip python-dev libffi-dev libxml2-dev libxslt1-dev megatools
+    - git clone https://github.com/alanndz/scripts
+    - cd scripts
+    - bash setup/android_build_env.sh
+    - cd ..
+    - rm -rf scripts
+    - apt-get install -y libpython-stdlib libpython2.7-minimal libpython2.7-stdlib python-minimal python2.7 python2.7-minimal
+    - curl -O http://commondatastorage.googleapis.com/git-repo-downloads/repo
+    - chmod +x repo
+    - install ./repo /usr/local/bin/repo
 
 - name: download_rom_stuff
-   image: debian:latest
-   commands:
-     - repo init -u https://github.com/KomodOS-Rom/platform_manifest.git -b pie
-     - repo sync -c -f --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j8
+  image: debian:latest
+  commands:
+    - ./repo init -u https://github.com/KomodOS-Rom/platform_manifest.git -b pie
+    - ./repo sync -c -f --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j8
 
 - name: start_build
-   image: debian:latest
-   environment:
-     USER_MEGA:
-        from_secret: USER_MEGA
-     PASS_MEGA:
-       from_secret: PASS_MEGA
-     BOT_API_KEY:
-       from_secret: BOT_API_KEY
-   commands:
-     - bash build.sh
-   when:
-     branch:
-       - komodo-lavender
+  image: debian:latest
+  environment:
+    USER_MEGA:
+      from_secret: USER_MEGA
+    PASS_MEGA:
+      from_secret: PASS_MEGA
+    BOT_API_KEY:
+      from_secret: BOT_API_KEY
+  commands:
+    - bash build.sh
+  when:
+    branch:
+      - komodo-lavender
