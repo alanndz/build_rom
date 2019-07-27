@@ -5,16 +5,10 @@ clone:
   depth: 1
 
 steps:
-- name: setup_tools
+- name: sync_source
   image: ubuntu:18.04
   commands:
     - apt-get update
-    - apt-get install -y git ccache lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib python-networkx libxml2-utils bzip2 libbz2-dev libghc-bzlib-dev squashfs-tools pngcrush liblz4-tool optipng libc6-dev-i386 gcc-multilib libssl-dev gnupg flex lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev xsltproc unzip python-pip python-dev libffi-dev libxml2-dev libxslt1-dev megatools
-    - git clone https://github.com/alanndz/scripts
-    - cd scripts
-    - bash setup/android_build_env.sh
-    - cd ..
-    - rm -rf scripts
     - apt-get install -y python repo
     - repo init -u https://github.com/KomodOS-Rom/platform_manifest.git -b pie
     - repo sync -c -f --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j8
@@ -29,6 +23,13 @@ steps:
     BOT_API_KEY:
       from_secret: BOT_API_KEY
   commands:
+    - apt-get update
+    - apt-get install -y git repo ccache lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib python-networkx libxml2-utils bzip2 libbz2-dev libghc-bzlib-dev squashfs-tools pngcrush liblz4-tool optipng libc6-dev-i386 gcc-multilib libssl-dev gnupg flex lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev xsltproc unzip python-pip python-dev libffi-dev libxml2-dev libxslt1-dev megatools
+    - git clone https://github.com/alanndz/scripts
+    - cd scripts
+    - bash setup/android_build_env.sh
+    - cd ..
+    - rm -rf scripts
     - bash build.sh
   when:
     branch:
