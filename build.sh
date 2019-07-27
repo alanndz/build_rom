@@ -32,8 +32,7 @@ function sendInfo() {
             for POST in "${@}"; do
                 echo "${POST}"
             done
-        )" 
-&>/dev/null
+        )"
 }
 
 function sendLog() {
@@ -45,7 +44,7 @@ function sendLog() {
 function sendRom() {
     cd out
     FILEPATH=$(find -iname "KomodOS-*-${DEVICE}-${KOMODO_BUILD_TYPE}-*.zip)
-    if [[ ! -f FILEPATH ]]; then
+    if [[ ! -f $FILEPATH ]]; then
         sendInfo "Build Failed, See log"
         sendInfo "Total time elapsed: $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
         sendLog
